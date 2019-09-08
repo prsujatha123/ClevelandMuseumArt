@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+<
+>Cleveland Art Musium</title>
+{% block head %}
+
+  <script>
+
+
+        function format_link(href,text) {
+            output = "<a href=\"" + href + "\">" + text + "</a>"
+            return output
+           }
+
+        function format_icon(href,icon) {
+          icon = "<img src=\"" + icon + "\" alt=\"ABC\" width=\"150\" height=\"150\" border=\"0\">";
+            output = "<a href=\"" + href + "\">" + icon + "</a>"
+            return output
+        }
+
+           function format_data(n){
+
+               text ='<p><strong>'+n.title+'</strong><br>'+n.accession_number
+               return text
+           }
+
+            function format_art_cards(data) {
+            function format_art_card(n) {
+                delete_link = format_icon("/art/" + n.accession_number,"/static/images/"+n.accession_number+"_reduced.jpg")
+                 text_display=format_data(n)
+                card = `
+                  <div   class="col-sm-3">`+  delete_link+ text_display+`</div>`
+                  console.log(card)
+                return card;
+            }
+            notes_data = data["data"];
+            output = '<div class="row">'
+            for (i in notes_data) {
+                output += format_art_card(notes_data[i]);
+            }
+            return output + "</div>";
+           }
+        $(document).ready(function() {
+
+            $("#submit_button").click(function() {
+                filter = $("#title_text").val()
+                $.get("/content/" + filter, function(data) {
+                    $("#content").html(format_art_cards(data));
+                });
+            });
+            $.get("/content/", function(data) {
+
+                $("#content").html(format_art_cards(data));
+            });
+
+
+        });
+    </script>
+
+{% endblock %}
+{% block body %}
+    <br>
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <ul class="navbar-nav">
+
+         <li class="nav-item">
+
+        <a class="navbar-brand" href="/">Home</a>
+
+
+
+        <li class="nav-item" style="margin-left:800px">
+            <input style="width:250px" type="text" id="title_text" name="title"  placeholder=" search art work title"  value=""/>
+
+        </li>
+
+             <li>
+            <input type="submit" style="float:right" id="submit_button" value="Search"/>
+        </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+<br>
+<br>
+<div id="content" class="container text-center">
+
+
+
+</div>
+
+
+
+
+
+
+{% endblock %}

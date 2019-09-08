@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+<title>Cleveland Art Musium</title>
+{% block head %}
+
+
+<script>
+
+
+function format_icon(icon) {
+         icon = "<img src=\"" + icon + "\" alt=\"ABC\" width=\"100%\" height=\"100%\" border=\"0\">";
+
+            return icon
+        }
+
+           function format_data(n){
+              text='<br><h3>'+n.title+'<\h3>'
+              return text
+           }
+
+
+          function format_art_Details(data) {
+
+             arts_data = data["data"];
+               var n,description="";
+               for (i in arts_data) {
+                 n=arts_data[i];
+                 if(n.description!=null)
+                 description+=n.description+'<br>'
+               }
+
+             output = '<div class="left" width=100% height=100%><div class="row" >'
+
+             image_link = format_icon("/static/images/"+n.accession_number+"_reduced.jpg")
+                 text_display=format_data(n)
+                 card = `
+                  <div   class="col-sm-6" >`+  image_link+ text_display+`</div>`
+                  var rightSide ='<div class="col-sm-6"><h6>Created By:</h6>'
+
+                   if(description!=null)
+                      rightSide+='<p>'+description+'</><br><br>'
+                    else
+                       rightSide+='<br>'
+
+
+                    rightSide+= '<h6>Department</h6>'
+                      if(n.department_name!=null)
+                      rightSide+='<p>'+ n.department_name+'</><br><br>'
+                    else
+                       rightSide+='<br>'
+                    rightSide+= '<h6>Tombstone:</h6>'
+                    if(n.tombstone!=null)
+                      rightSide+='<p>'+ n.tombstone+'</><br><br>'
+                    else
+                       rightSide+='<br>'
+
+
+                  rightSide+='</div>'
+               return output+card+rightSide
+           }
+     $(document).ready(function() {
+
+                  var num ='{{accession_number}}'
+
+                  path="/artDetails/"+num
+            $.get(path, function(data) {
+
+                 $("#artDisplay").html(format_art_Details(data));
+            });
+        });
+
+
+
+    </script>
+
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div id="artDisplay" style="margin:30px">
+
+  </div>
+</div>
+{% endblock %}
